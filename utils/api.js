@@ -1,4 +1,4 @@
-import { AsyncStorage } from "react-native";
+import AsyncStorage from '@react-native-community/async-storage';
 import { CALENDAR_STORAGE_KEY } from "./_calendar";
 
 // Submit a new entry for the day
