@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { receiveEntries, addEntry } from "../actions";
 import { timeToString, getDailyReminderValue } from "../utils/helpers";
 import { fetchCalendarResults } from "../utils/api";
-import UdaciFitnessCalendar from "udaciFitness-calendar";
+import UdaciFitnessCalendar from "udacifitness-calendar";
 
 class History extends Component {
   componentDidMount() {
@@ -16,17 +16,16 @@ class History extends Component {
         // if we don't have any entry for today
         if (!entries[timeToString()]) {
           // display message "👋 Don't forget to log your data today" by adding it to our redux state
-          dispatch(addEntry({ [timeToString()]: getDailyReminderValue }));
+          dispatch(addEntry({ [timeToString()]: getDailyReminderValue() }));
         }
-      });
+      })
+      .then(() => this.setState(() => ({ ready: true })));
   }
   renderItem = ({ today, ...metrics }, formattedDate, key) => (
     <View>
-      {today ? (
-        <Text>{JSON.stringify(today)}</Text>
-      ) : (
-        <Text>{JSON.stringify(metrics)}</Text>
-      )}
+      {today 
+      ?  <Text>{JSON.stringify(today)}</Text>
+      : <Text>{JSON.stringify(metrics)}</Text>}
     </View>
   );
   renderEmptyDate(formattedDate) {
@@ -39,11 +38,11 @@ class History extends Component {
   render() {
     const { entries } = this.props;
     return (
-        <UdaciFitnessCalendar
-          items={entries}
-          renderItem={this.renderItem}
-          renderEmptyDate={this.renderEmptyDate}
-        />
+      <UdaciFitnessCalendar
+        items={entries}
+        renderItem={this.renderItem}
+        renderEmptyDate={this.renderEmptyDate}
+      />
     );
   }
 }
@@ -52,4 +51,4 @@ function mapStateToProps(entries) {
     entries
   };
 }
-export default connect(mapStateToProps)(History);
+export default connect(mapStateToProps,)(History);
