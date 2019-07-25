@@ -13,6 +13,7 @@ import { fetchCalendarResults } from "../utils/api";
 import UdaciFitnessCalendar from "udacifitness-calendar";
 import { white } from "../utils/colors";
 import DateHeader from "./DateHeader";
+import MetricCard from "./MetricCard";
 
 class History extends Component {
   componentDidMount() {
@@ -38,7 +39,7 @@ class History extends Component {
         </View>
       ) : (
         <TouchableOpacity onPress={() => {}}>
-          <Text>{JSON.stringify(metrics)}</Text>
+          <MetricCard metrics={metrics} date={formattedDate} />
         </TouchableOpacity>
       )}
     </View>
