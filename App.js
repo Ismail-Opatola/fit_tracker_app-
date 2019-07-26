@@ -9,42 +9,54 @@ import { createBottomTabNavigator, createAppContainer, createNavigator, createMa
 import {purple, white} from './utils/colors';
 import { FontAwesome, Ionicons} from '@expo/vector-icons';
 
-const Tabs = createMaterialTopTabNavigator({
+const Tabs = {
   History: {
     screen: History,
     navigationOptions: {
       tabBarLabel: 'History',
-      tabBarIcon: ({ tintColor }) => <Ionicons name='ios-bookmarks' size={30} color={tintColor}/>
-    }
+      tabBarIcon: ({ tintColor }) =>
+        Platform.OS === 'ios' && <Ionicons name="ios-bookmarks" size={30} color={tintColor} />,
+    },
   },
   AddEntry: {
     screen: AddEntry,
     navigationOptions: {
       tabBarLabel: 'Add Entry',
-      tabBarIcon: ({ tintColor }) => <FontAwesome name='plus-square' size={30} color={tintColor}/>
-    }
-  }
-}, {
+      tabBarIcon: ({ tintColor }) =>
+        Platform.OS === 'ios' && <FontAwesome name="plus-square" size={30} color={tintColor} />,
+    },
+  },
+};
+
+const navigationOptions = {
   navigationOptions: {
     header: null
   },
   tabBarOptions: {
+    // showIcon: true,
     activeTintColor: Platform.OS === 'ios' ? purple : white,
     style: {
-      height: 56,
+      padding: 10,
+      height: Platform.OS === 'ios' ? 60 : 'auto',
+      fontSize: 18,
       backgroundColor: Platform.OS === 'ios' ? white : purple,
       shadowColor: 'rgba(0, 0, 0, 0.24)',
       shadowOffset: {
         width: 0,
-        height: 3
+        height: 3,
       },
       shadowRadius: 6,
-      shadowOpacity: 1
-    }
-  }
-})
+      shadowOpacity: 1,
+    },
+  },
+};
 
-const AppContainer  = createAppContainer(Tabs)
+const TabNav =
+  Platform.OS === 'ios'
+    ? createBottomTabNavigator(Tabs, navigationOptions)
+    : createMaterialTopTabNavigator(Tabs, navigationOptions);
+
+const AppContainer  = createAppContainer(TabNav);
 
 export default class App extends React.Component {
   render() {
