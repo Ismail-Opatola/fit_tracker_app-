@@ -2,6 +2,7 @@ import React from "react";
 import { View, Platform, StatusBar } from "react-native";
 import AddEntry from "./components/AddEntry";
 import History from "./components/History";
+import Live from "./components/Live";
 import EntryDetail from "./components/EntryDetail";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
@@ -44,6 +45,13 @@ const Tabs = {
         Platform.OS === "ios" && (
           <FontAwesome name="plus-square" size={30} color={tintColor} />
         )
+    }
+  },
+  Live: {
+    screen: Live,
+    navigationOptions: {
+      tabBarLabel: 'Live',
+      tabBarIcon: ({ tintColor }) => <Ionicons name='ios-speedometer' size={30} color={tintColor} />
     }
   }
 };
