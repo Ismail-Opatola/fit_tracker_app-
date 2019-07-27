@@ -6,6 +6,7 @@ import {
   Platform,
   StyleSheet
 } from "react-native";
+import {NavigationActions} from 'react-navigation'
 import {
   getMetricMetaInfo,
   timeToString,
@@ -79,6 +80,9 @@ class AddEntry extends Component {
         [key]: entry
       })
     );
+    
+    // Save to 'DB'
+    submitEntry({ key, entry });
 
     this.setState({
       run: 0,
@@ -87,13 +91,11 @@ class AddEntry extends Component {
       sleep: 0,
       eat: 0
     });
+    
+    // Clear local notification
 
     // Navigate to home
-
-    // Save to 'DB'
-    submitEntry({ key, entry });
-
-    // Clear local notification
+    this.toHome()
   };
   reset = () => {
     const key = timeToString();
@@ -104,12 +106,18 @@ class AddEntry extends Component {
         [key]: getDailyReminderValue()
       })
     );
-
-    // Route to Home
-
     // Update "DB"
     removeEntry(key);
+    // Route to Home
+    this.toHome()
   };
+
+  toHome = () => {
+    this.props.navigation.dispatch(NavigationActions.back({
+      // from
+      key: 'AddEntry'
+    }))
+  }
   render() {
     const metaInfo = getMetricMetaInfo();
     if (this.props.alreadyLogged) {
