@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { connect } from "react-redux";
+import { timeToString, getDailyReminderValue } from "../utils/helpers";
 import { white } from "../utils/colors";
-import entries from "../reducers";
 import MetricCard from "./MetricCard";
+import TextButton from "./TextButton";
+import { addEntry } from "../actions";
+import { removeEntry } from "../utils/api";
 
 class EntryDetail extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -15,16 +18,25 @@ class EntryDetail extends Component {
       title: `${month}/${day}/${year}`
     };
   };
+  reset = () => {
+    const { remove, goBack, entryId } = this.props;
+
+    remove();
+    goBack();
+    removeEntry(entryId);
+  };
+  shouldComponentUpdate(nextProps) {
+    return nextProps.metrics !== null && !nextProps.metrics.today;
+  }
   render() {
     const { metrics } = this.props;
 
     return (
       <View style={styles.container}>
         <MetricCard metrics={metrics} />
-        <Text>
-          Entry Detail -{" "}
-          {JSON.stringify(this.props.navigation.state.params.entryId)}
-        </Text>
+        <TextButton style={{ margin: 20 }} onPress={this.reset}>
+          RESET
+        </TextButton>
       </View>
     );
   }
@@ -38,12 +50,30 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state, { navigation }) => {
+function mapStateToProps(state, { navigation }) {
   const { entryId } = navigation.state.params;
+
   return {
     entryId,
     metrics: state[entryId]
   };
-};
+}
 
-export default connect(mapStateToProps)(EntryDetail);
+function mapDispatchToProps(dispatch, { navigation }) {
+  const { entryId } = navigation.state.params;
+
+  return {
+    remove: () =>
+      dispatch(
+        addEntry({
+          [entryId]: timeToString() === entryId ? getDailyReminderValue() : null
+        })
+      ),
+    goBack: () => navigation.goBack()
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EntryDetail);
