@@ -6,6 +6,8 @@ import { FontAwesome, MaterialIcons, MaterialCommunityIcons } from '@expo/vector
 import { white, red, orange, blue, lightPurp, pink } from './colors'
 // import { black } from 'ansi-colors';
 
+const NOTIFICATION_KEY = 'UdaciFitness:notifications'
+
 const styles = StyleSheet.create({
   iconContainer: {
     padding: 5,
