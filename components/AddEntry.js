@@ -10,7 +10,9 @@ import {NavigationActions} from 'react-navigation'
 import {
   getMetricMetaInfo,
   timeToString,
-  getDailyReminderValue
+  getDailyReminderValue,
+  clearLocalNotification,
+  setLocalNotification
 } from "../utils/helpers";
 import { submitEntry, removeEntry } from "../utils/api";
 import Slider from "./Slider";
@@ -92,7 +94,9 @@ class AddEntry extends Component {
       eat: 0
     });
     
-    // Clear local notification
+    // Clear local notification and set another reminder for next day 8 o'clock
+    clearLocalNotification()
+    .then(setLocalNotification()) 
 
     // Navigate to home
     this.toHome()
@@ -106,8 +110,10 @@ class AddEntry extends Component {
         [key]: getDailyReminderValue()
       })
     );
+    
     // Update "DB"
     removeEntry(key);
+
     // Route to Home
     this.toHome()
   };
