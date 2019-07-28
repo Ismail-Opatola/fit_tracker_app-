@@ -10,13 +10,13 @@ import reducer from "./reducers";
 import {
   createBottomTabNavigator,
   createAppContainer,
-  createNavigator,
   createMaterialTopTabNavigator,
   createStackNavigator
 } from "react-navigation";
 import { purple, white } from "./utils/colors";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { Constants } from "expo";
+import { setLocalNotification } from './utils/helpers'
 
 function CustomStatusBar({ backgroundColor, ...props }) {
   return (
@@ -105,6 +105,9 @@ const MainNavigator = createStackNavigator({
 const AppContainer = createAppContainer(MainNavigator);
 
 export default class App extends React.Component {
+  componentDidMount () {
+    setLocalNotification()
+  }
   render() {
     return (
       <Provider store={createStore(reducer)}>
