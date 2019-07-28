@@ -5,7 +5,8 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   StyleSheet,
-  Platform
+  Platform,
+  Animated
 } from "react-native";
 import { Foundation, MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
@@ -19,11 +20,15 @@ export default class Live extends Component {
     coords: null,
     status: null,
     direction: "",
-    errorMessage: ""
+    detectEmulator: "",
+    bounceValue: new Animated.Value(1)
   };
   componentDidMount() {
     if (Platform.OS === "android" && !Constants.isDevice) {
-      this.setState({errorMessage: "Oops, this will not work on Sketch in an Android emulator. Try it on your device!"});
+      this.setState({
+        detectEmulator:
+          "Oops, this will not work on Sketch in an Android emulator. Try it on your device!"
+      });
     } else {
       Permissions.getAsync(Permissions.LOCATION)
         .then(({ status }) => {
@@ -62,7 +67,14 @@ export default class Live extends Component {
       },
       ({ coords }) => {
         const newDirection = calculateDirection(coords.heading);
-        const { direction } = this.state;
+        const { direction, bounceValue } = this.state;
+
+        if (newDirection !== direction) {
+          Animated.sequence([
+            Animated.timing(bounceValue, { duration: 200, toValue: 1.04 }),
+            Animated.spring(bounceValue, { toValue: 1, friction: 4 })
+          ]).start();
+        }
 
         this.setState(() => ({
           coords,
@@ -73,12 +85,18 @@ export default class Live extends Component {
     );
   };
   render() {
-    const { status, coords, direction, errorMessage } = this.state;
-    if (errorMessage) {
+    const {
+      status,
+      coords,
+      direction,
+      bounceValue,
+      detectEmulator
+    } = this.state;
+    if (detectEmulator) {
       return (
         <View style={styles.center}>
           <MaterialIcons name="devices-other" size={50} />
-          <Text>{errorMessage}</Text>
+          <Text>{detectEmulator}</Text>
         </View>
       );
     } else {
@@ -118,7 +136,11 @@ export default class Live extends Component {
       <View style={styles.container}>
         <View style={styles.directionContainer}>
           <Text style={styles.header}>You're heading</Text>
-          <Text style={styles.direction}>{direction}</Text>
+          <Animated.Text
+            style={[styles.direction, { transform: [{ scale: bounceValue }] }]}
+          >
+            {direction}
+          </Animated.Text>
         </View>
         <View style={styles.metricContainer}>
           <View style={styles.metric}>
